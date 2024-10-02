@@ -31,7 +31,7 @@ struct operation op[OPERATIONS];
 
 int main (void) 
 {
-    printf("WELCOME TO KANE's EXPERIMENTAL GENERAL PURPOSE MATRIX CALCULATOR v1.0\n\n");
+    printf("WELCOME TO KANE's EXPERIMENTAL GENERAL PURPOSE MATRIX CALCULATOR v1.1\n\n");
 
     //name the operations
     struct operation op[OPERATIONS];
