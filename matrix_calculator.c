@@ -4,7 +4,7 @@
 #include <conio.h>
 
 #define MATRIX_LIMIT 1000
-#define OPERATIONS 7
+#define OPERATIONS 8
 
 void add(int columns, int target_r, int source_r, double factor, double matrix[][columns]);
 void multi(int columns, int row, double factor, double matrix[][columns], int type);
@@ -21,6 +21,7 @@ int add_matrix(void);
 int scalar_multi(void);
 int multi_matrix(void);
 int transpose(void);
+int trace(void);
 int determinant(void);
 int inverse(void);
 
@@ -41,8 +42,9 @@ int main (void)
     op[2].name = "Scalar-Multi";
     op[3].name = "Matrix-Multi";
     op[4].name = "Transpose";
-    op[5].name = "Determinant";
-    op[6].name = "Inverse";
+    op[5].name = "Trace";
+    op[6].name = "Determinant";
+    op[7].name = "Inverse";
     int selected = 0;
     int return_value = 0;
 
@@ -69,7 +71,7 @@ int main (void)
 
         //if selected is invalid, exit
         if(selected < 0 || selected > OPERATIONS) {
-            printf("Invalid Input...");
+            printf("\nInvalid Input...");
             getch();
             continue;
         }
@@ -98,9 +100,12 @@ int main (void)
                 return_value = transpose();
                 break;
             case 6:
-                return_value = determinant();
+                return_value = trace();
                 break;
             case 7:
+                return_value = determinant();
+                break;
+            case 8:
                 return_value = inverse();
                 break;
         }
@@ -332,9 +337,39 @@ int transpose(void)
     return 0;
 }
 
-int determinant(void)
+int trace(void)
 {
     int rows = 0, columns = 0, type = 5;
+
+    if(matrix_dimensions(&rows, &columns, type) != 0)
+    {
+        return 2;
+    }
+
+    double matrix[rows][columns];
+    memset(matrix, 0, sizeof(matrix));
+
+    if(populate_matrix(rows, columns, matrix, type) != 0)
+    {
+        return 3;
+    }
+
+    printf("Matrix:");
+    print_matrix(rows, columns, matrix, type);
+
+    double trace = 0;
+    for (int i = 0; i < rows; i++)
+    {
+        trace += matrix[i][i];
+    }
+    
+    printf("\nThe trace of the matrix is %.2lf\n", trace);
+    return 0;
+}
+
+int determinant(void)
+{
+    int rows = 0, columns = 0, type = 6;
 
     if(matrix_dimensions(&rows, &columns, type) != 0)
     {
@@ -371,7 +406,7 @@ int determinant(void)
 
 int inverse(void)
 {
-    int rows = 0, columns = 0, type = 6;
+    int rows = 0, columns = 0, type = 7;
 
     if(matrix_dimensions(&rows, &columns, type) != 0)
     {
@@ -422,11 +457,10 @@ int matrix_dimensions(int *rows, int *columns, int type)
                 printf("\n");
                 break;
             } else {
-                printf("Invalid input...");\
-                getch();
+                printf("\nInvalid input...\n");\
                 return 2;
             }
-        } else if (type == 5 || type == 6) { // requires square matrix
+        } else if (type == 5 || type == 6 || type == 7) { // requires square matrix
             printf("Enter Matrix Size (int): ");
             if(scanf("%i", rows) == 1 && *rows >= 2)
             {
@@ -434,8 +468,7 @@ int matrix_dimensions(int *rows, int *columns, int type)
                 printf("\n");
                 break;
             } else {
-                printf("Invalid input...");
-                getch();
+                printf("\nInvalid input...\n");
                 return 2;
             }
         } else {
@@ -445,8 +478,7 @@ int matrix_dimensions(int *rows, int *columns, int type)
                 printf("\n");
                 break;
             } else {
-                printf("Invalid input...");
-                getch();
+                printf("\nInvalid input...\n");
                 return 2;
             }
         }
@@ -456,7 +488,7 @@ int matrix_dimensions(int *rows, int *columns, int type)
 
 int populate_matrix(int rows, int columns, double matrix[][columns], int type)
 {
-    if (type == 6) {
+    if (type == 7) {
         columns /= 2;
     }
 
@@ -466,8 +498,7 @@ int populate_matrix(int rows, int columns, double matrix[][columns], int type)
         {
             printf("Populate Matrix, Enter Value for Matrix Index[\033[33m%i\033[0m][\033[33m%i\033[0m]: ", x, y);
             if(scanf("%lf", &matrix[x][y]) != 1) {
-                printf("Invalid Input...");
-                getch();
+                printf("\nInvalid Input...\n");
                 return 3;
             }
         }
@@ -497,7 +528,7 @@ void print_matrix(int rows, int columns, double matrix[][columns], int type)
                 printf("| ");
             }
 
-            if (y == columns / 3 && type == 6)
+            if (y == columns / 3 && type == 7)
             {
                 printf("|");
             }
@@ -526,7 +557,7 @@ void multi(int columns, int row, double factor, double matrix[][columns], int ty
         matrix[row][j] = matrix[row][j] * factor;
     }
 
-    if(type == 0 || type == 5 || type == 6)
+    if(type == 0 || type == 6 || type == 7)
     {
     printf("\n(\033[33m%.2lf\033[0m)R%i\n", factor, row + 1);
     }
@@ -563,7 +594,7 @@ void check_gauss(int rows, int columns, double matrix[][columns], int type, doub
             {
                 if(matrix[i][diag_col] != 0)
                 {
-                    if (type == 5) {
+                    if (type == 6) {
                         *det_address *= -1;
                     }
                     swap(columns, x, i, matrix);
@@ -583,7 +614,7 @@ void check_gauss(int rows, int columns, double matrix[][columns], int type, doub
         if(matrix[x][diag_col] != 1)
         {
             //find inverse of diagonal, then perform operation
-            if (type == 5) {
+            if (type == 6) {
                 *det_address *= matrix[x][diag_col];
             }
             double factor = 1.0 / matrix[x][diag_col];
@@ -611,7 +642,7 @@ void check_jordan(int rows, int columns, double matrix[][columns], int type)
 {
     for (int diag_col = 0; diag_col < columns - 1; diag_col++) 
     {
-        if (type == 6 && diag_col == (columns / 2)) {
+        if (type == 7 && diag_col == (columns / 2)) {
             return;
         }
 
