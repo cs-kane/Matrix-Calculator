@@ -530,7 +530,7 @@ void print_matrix(int rows, int columns, double matrix[][columns], int type)
 
             if (y == columns / 3 && type == 7)
             {
-                printf("|");
+                printf("| ");
             }
 
         }
