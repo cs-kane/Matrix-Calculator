@@ -50,7 +50,7 @@ int main(void) {
 
     while (1) {
         system("cls");
-        printf("WELCOME TO NEO's EXPERIMENTAL GENERAL PURPOSE MATRIX CALCULATOR \033[33mv2.0\033[0m\n\n");
+        printf("WELCOME TO KANE's EXPERIMENTAL GENERAL PURPOSE MATRIX CALCULATOR \033[33mv2.0\033[0m\n\n");
         printf("Matrix Operations: \n");
 
         for (int i = 0; i < OPERATIONS; i++) {
